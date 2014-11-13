@@ -38,6 +38,7 @@ class MainWindow() extends JFrame {
     val STATUS_JOINING: String = "Joining"
     val STATUS_LOST: String = "Lost"
     val STATUS_WINNING: String = "Winning"
+    val STATUS_WON: String = "Won"
 
 
   }
