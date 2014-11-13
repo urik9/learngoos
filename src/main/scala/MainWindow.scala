@@ -32,11 +32,12 @@ class MainWindow() extends JFrame {
 }
 
   object MainWindow {
-    val STATUS_BIDDING: String = ""
+    val STATUS_BIDDING: String = "Bidding"
     val MAIN_WINDOW_NAME = "Auction Sniper"
     val SNIPER_STATUS_NAME = "sniper-status"
     val STATUS_JOINING: String = "Joining"
     val STATUS_LOST: String = "Lost"
+    val STATUS_WINNING: String = "Winning"
 
 
   }

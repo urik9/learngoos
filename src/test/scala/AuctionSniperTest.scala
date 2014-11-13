@@ -15,14 +15,30 @@ class AuctionSniperTest extends Specification with JMock {
   }
 
   "AuctionSniper" should {
-    "bid higher and report when new price arrives" in new TestScope {
-      val price: Int = 1001
-      val increment: Int = 25
+    "report lost when auction closes" in new TestScope {
+      checking {
+        atLeast(1).of(sniperListener).sniperLost()
+      }
+        sniper.auctionClosed()
+    }
+
+
+    "bid higher and report when new price arrives" in {
+      val price = 1001
+      val increment = 25
       val bid = price + increment
       checking {
-        oneOf(auction).bid(bid)
+       oneOf(auction).bid(bid)
         atLeast(1).of(sniperListener).sniperBidding()
       }
+      sniper.currentPrice(price, increment, PriceSource.FromOtherBidder)
+    }
+
+    "report is winning when current price is from sniper" in {
+      checking {
+        atLeast(1).of(sniperListener).sniperWinning()
+      }
+      sniper.currentPrice(123, 45, PriceSource.FromSniper)
     }
 
   }

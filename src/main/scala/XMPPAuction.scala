@@ -9,7 +9,7 @@ class XMPPAuction(chat: Chat) extends Auction {
     sendMessage(BID_COMMAND_FORMAT format amount)
   }
 
-  def join(){
+  override def join(){
     sendMessage(JOIN_COMMAND_FORMAT)
   }
 

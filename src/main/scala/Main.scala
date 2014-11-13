@@ -13,7 +13,7 @@ import org.jivesoftware.smack.{Chat, XMPPConnection}
 
 
 
-class Main (args: String*) {
+class Main (args: String*) extends {
 
   val connection: XMPPConnection = connectTo(args(ARG_HOSTNAME), args(ARG_USERNAME), args(ARG_PASSWORD))
   var notToBeGCd: Chat = _
@@ -26,19 +26,14 @@ class Main (args: String*) {
 
   def joinAuction(connection: XMPPConnection, itemId: String) = {
     disconnectWhenUICloses(connection)
-
     val chat: Chat = connection.getChatManager.createChat(
         auctionId(itemId, connection), null)
     this.notToBeGCd = chat
-
-    val auction: Auction = new XMPPAuction(chat) {
-      override def bid(amount: Int){
-        chat.sendMessage(String.format(JOIN_COMMAND_FORMAT, amount.toString))
-      }
-    }
-    chat.addMessageListener(new AuctionMessageTranslator(new AuctionSniper(auction, new SniperStateDisplayer(ui))))
-    chat.sendMessage(JOIN_COMMAND_FORMAT)
+    val auction: Auction = new XMPPAuction(chat)
+    chat.addMessageListener(new AuctionMessageTranslator(connection.getUser, new AuctionSniper(auction, new SniperStateDisplayer(ui))))
+    auction.join()
   }
+
 
   def disconnectWhenUICloses(connection: XMPPConnection) {
     ui.addWindowListener(new WindowAdapter() {
@@ -75,9 +70,9 @@ class Main (args: String*) {
 }
 
 object Main{
-  val BID_COMMAND_FORMAT = ""
+  val BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN; "
 
-  val JOIN_COMMAND_FORMAT = ""
+  val JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;"
 
   def main(args: Array[String]) {
     new Main()

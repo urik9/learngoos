@@ -13,6 +13,10 @@ class SniperStateDisplayer(ui: MainWindow) extends SniperListener {
     showStatus(MainWindow.STATUS_LOST)
   }
 
+  override def sniperWinning(){
+    showStatus(MainWindow.STATUS_WINNING)
+  }
+
   def showStatus(status:String){
     SwingUtilities.invokeLater(new Runnable {
       override def run(): Unit = ui.showStatus(status)

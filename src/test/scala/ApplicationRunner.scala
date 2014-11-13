@@ -9,6 +9,10 @@ import ApplicationRunner._
 
 
 class ApplicationRunner extends MustMatchers{
+  def showsSniperHasWonAuction(){}
+
+  def hasShownSniperIsWinning(){}
+
 
   def arguments(): List[String] = XMPP_HOSTNAME :: SNIPER_ID :: SNIPER_PASSWORD :: ITEM_ID :: Nil
 

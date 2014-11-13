@@ -12,7 +12,7 @@ class AuctionMessageTranslatorTest extends Specification with JMock {
 
   val UNUSED_CHAT: Chat = null
   val listener =  mock[AuctionEventListener]
-  val translator: AuctionMessageTranslator = new AuctionMessageTranslator(listener)
+  val translator: AuctionMessageTranslator = new AuctionMessageTranslator(ApplicationRunner.SNIPER_XMPP_ID,listener)
 
 
 
@@ -31,13 +31,33 @@ class AuctionMessageTranslatorTest extends Specification with JMock {
 
     "notifies bid details when current price message received" in {
       checking {
-        exactly(1).of(listener).currentPrice(192, 7)
+        exactly(1).of(listener).currentPrice(192, 7, PriceSource.FromOtherBidder)
       }
 
       val message: Message = new Message()
       message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: Someone else;")
       translator.processMessage(UNUSED_CHAT, message)
     }
+
+    "notifies bid details when current price message received from other bidder" in {
+      checking {
+        exactly(1).of(listener).currentPrice(234, 5, PriceSource.FromOtherBidder)
+      }
+      val message: Message = new Message()
+      message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 234; Increment: 5; Bidder: Someone else;")
+      translator.processMessage(UNUSED_CHAT, message)
+    }
+
+    "notifies bid details when current price message received from sniper" in {
+      checking {
+        exactly(1).of(listener).currentPrice(234, 5, PriceSource.FromSniper)
+      }
+      val message: Message = new Message()
+      message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 234; Increment: 5; Bidder: "+ ApplicationRunner.SNIPER_XMPP_ID + ";")
+      translator.processMessage(UNUSED_CHAT, message)
+    }
+
+
   }
 
 }
