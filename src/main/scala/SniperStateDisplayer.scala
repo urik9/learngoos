@@ -5,25 +5,9 @@ import javax.swing.SwingUtilities
  */
 class SniperStateDisplayer(ui: MainWindow) extends SniperListener {
 
-  override def sniperBidding(){
-    showStatus(MainWindow.STATUS_BIDDING)
-  }
-
-  override def sniperLost(){
-    showStatus(MainWindow.STATUS_LOST)
-  }
-
-  override def sniperWinning(){
-    showStatus(MainWindow.STATUS_WINNING)
-  }
-
-  override def sniperWon(){
-    showStatus(MainWindow.STATUS_WON)
-  }
-
-  def showStatus(status:String){
+  override def sniperStateChanged(snapshot: SniperSnapshot): Unit ={
     SwingUtilities.invokeLater(new Runnable {
-      override def run(): Unit = ui.showStatus(status)
+      override def run(): Unit = ui.sniperStateChanged(snapshot)
     })
   }
 

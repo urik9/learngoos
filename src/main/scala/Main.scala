@@ -30,7 +30,7 @@ class Main (args: String*) extends {
         auctionId(itemId, connection), null)
     this.notToBeGCd = chat
     val auction: Auction = new XMPPAuction(chat)
-    chat.addMessageListener(new AuctionMessageTranslator(connection.getUser, new AuctionSniper(auction, new SniperStateDisplayer(ui))))
+    chat.addMessageListener(new AuctionMessageTranslator(connection.getUser, new AuctionSniper(itemId, auction, new SniperStateDisplayer(ui))))
     auction.join()
   }
 

@@ -1,6 +1,7 @@
-import MainWindow._
-import org.specs2.matcher.MustMatchers
 import ApplicationRunner._
+import SniperState._
+import SniperTableModel.textFor
+import org.specs2.matcher.MustMatchers
 
 
 /**
@@ -9,14 +10,12 @@ import ApplicationRunner._
 
 
 class ApplicationRunner extends MustMatchers{
-  def showsSniperHasWonAuction(){}
-
-  def hasShownSniperIsWinning(){}
-
+  var itemId: String = _
 
   def arguments(): List[String] = XMPP_HOSTNAME :: SNIPER_ID :: SNIPER_PASSWORD :: ITEM_ID :: Nil
 
   def startBiddingIn(auction:FakeAuctionServer) = {
+    itemId = auction.itemId
     val thread:Thread = new Thread("Test Application") {
       override def run() {
         new Main(arguments(): _*)
@@ -25,17 +24,23 @@ class ApplicationRunner extends MustMatchers{
     thread.setDaemon(true)
     thread.start()
     driver = new AuctionSniperDriver(1000)
-    driver.showsSniperStatus(STATUS_JOINING)
   }
 
 
 
-  def showsSniperIsBiddingIn() {
-    driver.showsSniperStatus(MainWindow.STATUS_BIDDING)
+  def showsSniperIsBidding(lastPrice:Int, lastBid:Int) {
+    driver.showsSniperStatus(itemId, lastPrice, lastBid, textFor(BIDDING))
+  }
+  def showsSniperHasWonAuction(lastPrice:Int){
+    driver.showsSniperStatus(itemId, lastPrice, lastPrice, textFor(WON))
   }
 
-  def showsSniperLost(auction: FakeAuctionServer) {
-    driver.showsSniperStatus(STATUS_LOST)
+  def hasShownSniperIsWinning(winningBid:Int){
+    driver.showsSniperStatus(itemId, winningBid, winningBid, textFor(WINNING))
+  }
+
+  def showsSniperLost(auction: FakeAuctionServer, lastPrice:Int, lastBid:Int) {
+   driver.showsSniperStatus(auction.itemId,lastPrice, lastBid, textFor(LOST))
   }
 
   def stop(){
