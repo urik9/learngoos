@@ -24,14 +24,16 @@ class ApplicationRunner extends MustMatchers{
     thread.setDaemon(true)
     thread.start()
     driver = new AuctionSniperDriver(1000)
+    driver.hasTitle(MainWindow.MAIN_WINDOW_NAME)
+    driver.hasColumnTitles()
   }
 
 
 
-  def showsSniperIsBidding(lastPrice:Int, lastBid:Int) {
+  def hasShowsSniperIsBidding(lastPrice:Int, lastBid:Int) {
     driver.showsSniperStatus(itemId, lastPrice, lastBid, textFor(BIDDING))
   }
-  def showsSniperHasWonAuction(lastPrice:Int){
+  def hasShowsSniperHasWonAuction(lastPrice:Int){
     driver.showsSniperStatus(itemId, lastPrice, lastPrice, textFor(WON))
   }
 
@@ -39,8 +41,8 @@ class ApplicationRunner extends MustMatchers{
     driver.showsSniperStatus(itemId, winningBid, winningBid, textFor(WINNING))
   }
 
-  def showsSniperLost(auction: FakeAuctionServer, lastPrice:Int, lastBid:Int) {
-   driver.showsSniperStatus(auction.itemId,lastPrice, lastBid, textFor(LOST))
+  def hasShowsSniperLost(auction: FakeAuctionServer, lastPrice:Int, lastBid:Int) {
+   driver.showsSniperStatus(itemId, lastPrice, lastBid, textFor(LOST))
   }
 
   def stop(){

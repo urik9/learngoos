@@ -14,7 +14,7 @@ import org.jivesoftware.smack.{Chat, XMPPConnection}
 
 
 class Main (args: String*) extends {
-
+  val snipers = new SniperTableModel
   val connection: XMPPConnection = connectTo(args(ARG_HOSTNAME), args(ARG_USERNAME), args(ARG_PASSWORD))
   var notToBeGCd: Chat = _
   var ui: MainWindow = _
@@ -22,15 +22,22 @@ class Main (args: String*) extends {
   startUserInterface()
   joinAuction(connection, args(ARG_ITEM_ID))
 
+  def startUserInterface() = {
+    SwingUtilities.invokeAndWait(new Runnable {
+      override def run(): Unit = {
+        ui = new MainWindow(snipers)
+      }
+    })
+  }
 
 
   def joinAuction(connection: XMPPConnection, itemId: String) = {
     disconnectWhenUICloses(connection)
     val chat: Chat = connection.getChatManager.createChat(
-        auctionId(itemId, connection), null)
+    auctionId(itemId, connection), null)
     this.notToBeGCd = chat
     val auction: Auction = new XMPPAuction(chat)
-    chat.addMessageListener(new AuctionMessageTranslator(connection.getUser, new AuctionSniper(itemId, auction, new SniperStateDisplayer(ui))))
+    chat.addMessageListener(new AuctionMessageTranslator(connection.getUser, new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers))))
     auction.join()
   }
 
@@ -57,13 +64,6 @@ class Main (args: String*) extends {
     String.format(AUCTION_ID_FORMAT, itemId, connection.getServiceName())
   }
 
-  def startUserInterface() = {
-    SwingUtilities.invokeAndWait(new Runnable {
-      override def run(): Unit = {
-        ui = new MainWindow()
-      }
-    })
-  }
 
   def currentPrice(price: Int, increment: Int): Unit = {}
 
